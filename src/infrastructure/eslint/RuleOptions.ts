@@ -3,7 +3,6 @@ import {
     DEFAULT_GROUP_MAPPING,
     DEFAULT_GROUP_ORDER,
     DEFAULT_COMMENT_TEMPLATE,
-    CommentTemplatePreset
 } from '../../config/defaults';
 import {ClassOrder} from '../sorting/ClassSorter';
 
@@ -62,7 +61,7 @@ export interface RuleOptions {
      * @example "/* {groupName} *\/" → "/* Size *\/"
      * @example "// {index}. {groupName} ({count})" → "// 1. Size (2)"
      */
-    commentTemplate?: string | CommentTemplatePreset;
+    commentTemplate?: string;
 
     /**
      * Sorting order for classes within each group

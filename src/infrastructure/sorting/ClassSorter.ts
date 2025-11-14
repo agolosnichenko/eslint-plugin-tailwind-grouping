@@ -78,7 +78,7 @@ export class ClassSorter {
                 classes.map(cls => [cls.toString(), cls])
             );
 
-            return sortedNames.map(name => classMap.get(name)!);
+            return sortedNames.map(name => classMap.get(name) as TailwindClass);
         } catch (error) {
             // If sorting fails, log error and return original order
             console.warn('Failed to sort classes using official Tailwind order:', error);

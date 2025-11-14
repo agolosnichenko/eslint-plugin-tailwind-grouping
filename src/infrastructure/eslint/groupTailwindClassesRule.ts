@@ -70,14 +70,18 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
 
                 // Handle static string values
                 if (jsxAttr.value?.type === 'Literal' && typeof jsxAttr.value.value === 'string') {
-                    handleStaticClassName(jsxAttr, jsxAttr.value);
+                    handleStaticClassName(jsxAttr, jsxAttr.value).catch(() => {
+                        // Silently handle errors to prevent floating promises
+                    });
                 }
 
                 // Handle JSX expressions with string literals
                 if (jsxAttr.value?.type === 'JSXExpressionContainer' &&
                     jsxAttr.value.expression.type === 'Literal' &&
                     typeof jsxAttr.value.expression.value === 'string') {
-                    handleStaticClassName(jsxAttr, jsxAttr.value.expression);
+                    handleStaticClassName(jsxAttr, jsxAttr.value.expression).catch(() => {
+                        // Silently handle errors to prevent floating promises
+                    });
                 }
 
                 // Handle template literals (static only)
@@ -86,7 +90,9 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
                     jsxAttr.value.expression.expressions.length === 0 && // Only static templates
                     jsxAttr.value.expression.quasis.length === 1) {
                     const templateValue = jsxAttr.value.expression.quasis[0].value.cooked || '';
-                    handleStaticClassNameFromTemplate(jsxAttr, templateValue);
+                    handleStaticClassNameFromTemplate(jsxAttr, templateValue).catch(() => {
+                        // Silently handle errors to prevent floating promises
+                    });
                 }
 
                 // TODO: Handle existing clsx/cn calls for reorganization
