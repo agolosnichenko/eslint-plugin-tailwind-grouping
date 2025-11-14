@@ -19,6 +19,25 @@ export const DEFAULT_GROUP_ORDER = [
 ] as const;
 
 /**
+ * Default comment template
+ */
+export const DEFAULT_COMMENT_TEMPLATE = '// {groupName}';
+
+/**
+ * Preset comment template styles
+ */
+export const COMMENT_TEMPLATE_PRESETS = {
+    line: '// {groupName}',
+    block: '/* {groupName} */',
+    jsdoc: '/** {groupName} **/',
+    bracket: '// [{groupName}]',
+    numbered: '// {index}. {groupName}',
+    verbose: '// {groupName} ({count} classes)'
+} as const;
+
+export type CommentTemplatePreset = keyof typeof COMMENT_TEMPLATE_PRESETS;
+
+/**
  * Default mapping of Tailwind classes to groups
  */
 export const DEFAULT_GROUP_MAPPING: GroupMapping = {

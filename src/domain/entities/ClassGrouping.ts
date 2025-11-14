@@ -1,11 +1,20 @@
 import {ClassGroup} from './ClassGroup';
+import {TailwindClass} from '../value-objects/TailwindClass';
+import {renderCommentTemplate} from '../utils/CommentTemplateRenderer';
+
+/**
+ * Type for sorting function that takes classes and returns sorted classes
+ * Can be async to support external sorting libraries
+ */
+export type ClassSorterFunction = (classes: TailwindClass[]) => Promise<TailwindClass[]> | TailwindClass[];
 
 /**
  * Aggregate Root representing the complete grouping of Tailwind classes
  * Maintains the order of groups and ensures business rules
  */
 export class ClassGrouping {
-    constructor(public readonly groups: ClassGroup[]) {}
+    constructor(public readonly groups: ClassGroup[]) {
+    }
 
     /**
      * Creates an empty grouping with predefined group names
@@ -51,9 +60,18 @@ export class ClassGrouping {
     }
 
     /**
-     * Formats the grouping as a clsx expression with comments
+     * Formats the grouping as a clsx expression with optional comments
+     * @param indentLevel - Number of spaces for indentation
+     * @param showGroupNames - Whether to include group name comments
+     * @param commentTemplate - Template string for comments (e.g., "// {groupName}", "/\u002A {index}. {groupName} \u002A/")
+     * @param sorter - Optional sorting function to apply to classes in each group
      */
-    toClsxString(indentLevel: number = 2): string {
+    async toClsxString(
+        indentLevel: number = 2,
+        showGroupNames: boolean = true,
+        commentTemplate: string = '// {groupName}',
+        sorter?: ClassSorterFunction,
+    ): Promise<string> {
         const indent = ' '.repeat(indentLevel);
         const nonEmptyGroups = this.getNonEmptyGroups();
 
@@ -61,12 +79,28 @@ export class ClassGrouping {
             return '""';
         }
 
-        const lines = nonEmptyGroups.flatMap((group, index) => {
-            return [
-                `${indent}// ${group.name}`,
-                `${indent}"${group.toClassString()}"${index < nonEmptyGroups.length - 1 ? ',' : ''}`
-            ];
-        });
+        const lines: string[] = [];
+
+        for (let index = 0; index < nonEmptyGroups.length; index++) {
+            const group = nonEmptyGroups[index];
+
+            // Apply sorting if sorter function is provided
+            const sortedClasses = sorter ? await sorter(group.classes) : undefined;
+            const classLine = `${indent}"${group.toClassString(sortedClasses)}"${index < nonEmptyGroups.length - 1 ? ',' : ''}`;
+
+            if (showGroupNames) {
+                // Render comment using template
+                const comment = renderCommentTemplate(commentTemplate, {
+                    groupName: group.name,
+                    index: index + 1, // 1-based index
+                    count: group.size
+                });
+                lines.push(`${indent}${comment}`);
+                lines.push(classLine);
+            } else {
+                lines.push(classLine);
+            }
+        }
 
         return `clsx(\n${lines.join('\n')}\n${' '.repeat(indentLevel - 2)})`;
     }

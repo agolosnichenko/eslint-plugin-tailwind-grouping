@@ -1,10 +1,14 @@
-import { TailwindClass } from '../../domain/value-objects/TailwindClass';
-import { ClassGroupingService } from '../../domain/services/ClassGroupingService';
-import { ClassGrouping } from '../../domain/entities/ClassGrouping';
+import {TailwindClass} from '../../domain/value-objects/TailwindClass';
+import {ClassGroupingService} from '../../domain/services/ClassGroupingService';
+import {ClassGrouping} from '../../domain/entities/ClassGrouping';
+import {ClassOrder, ClassSorter} from '../../infrastructure/sorting/ClassSorter';
 
 export interface TransformClassNameInput {
     classNameString: string;
     threshold: number;
+    showGroupNames?: boolean;
+    order?: ClassOrder;
+    commentTemplate?: string;
 }
 
 export interface TransformClassNameOutput {
@@ -19,10 +23,17 @@ export interface TransformClassNameOutput {
  * This is the main application service that orchestrates the transformation
  */
 export class TransformClassNameUseCase {
-    constructor(private readonly groupingService: ClassGroupingService) {}
+    constructor(private readonly groupingService: ClassGroupingService) {
+    }
 
-    execute(input: TransformClassNameInput): TransformClassNameOutput {
-        const { classNameString, threshold } = input;
+    async execute(input: TransformClassNameInput): Promise<TransformClassNameOutput> {
+        const {
+            classNameString,
+            threshold,
+            showGroupNames = true,
+            order = "no-sort",
+            commentTemplate = '// {groupName}'
+        } = input;
 
         // Parse the string into individual classes
         const classNames = this.parseClassNames(classNameString);
@@ -34,8 +45,11 @@ export class TransformClassNameUseCase {
             };
         }
 
+        // Remove duplicates (keep first occurrence)
+        const uniqueClassNames = this.removeDuplicates(classNames);
+
         // Convert to domain objects
-        const tailwindClasses = classNames.map(name => TailwindClass.create(name));
+        const tailwindClasses = uniqueClassNames.map(name => TailwindClass.create(name));
 
         // Group the classes
         const grouping = this.groupingService.groupClasses(tailwindClasses);
@@ -49,8 +63,13 @@ export class TransformClassNameUseCase {
             };
         }
 
+        // Create sorter function if order is specified and not 'no-sort'
+        const sorter = order && order !== 'no-sort'
+            ? (classes: TailwindClass[]) => ClassSorter.sort(classes, order)
+            : undefined;
+
         // Generate the transformed string
-        const transformedString = grouping.toClsxString();
+        const transformedString = await grouping.toClsxString(2, showGroupNames, commentTemplate, sorter);
 
         return {
             shouldTransform: true,
@@ -69,5 +88,22 @@ export class TransformClassNameUseCase {
             .split(/\s+/)
             .map(name => name.trim())
             .filter(name => name.length > 0);
+    }
+
+    /**
+     * Remove duplicate class names, keeping the first occurrence
+     */
+    private removeDuplicates(classNames: string[]): string[] {
+        const seen = new Set<string>();
+        const unique: string[] = [];
+
+        for (const name of classNames) {
+            if (!seen.has(name)) {
+                seen.add(name);
+                unique.push(name);
+            }
+        }
+
+        return unique;
     }
 }

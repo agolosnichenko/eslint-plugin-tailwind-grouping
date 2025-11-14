@@ -52,8 +52,10 @@ export class ClassGroup {
     /**
      * Converts the group to a formatted string for clsx
      * e.g., "h-9 w-full min-w-0"
+     * @param sortedClasses - Optional pre-sorted array of classes to use instead of this.classes
      */
-    toClassString(): string {
-        return this.classes.map(c => c.toString()).join(' ');
+    toClassString(sortedClasses?: TailwindClass[]): string {
+        const classesToUse = sortedClasses ?? this.classes;
+        return classesToUse.map(c => c.toString()).join(' ');
     }
 }

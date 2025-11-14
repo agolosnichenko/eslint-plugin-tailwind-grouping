@@ -6,6 +6,7 @@ import {ClassGroupingService} from '../../domain/services/ClassGroupingService';
 import {DEFAULT_OPTIONS, RuleOptions, ruleOptionsSchema} from './RuleOptions';
 import {ImportManager} from '../ast/ImportManager';
 import {GlobMatcher} from '../ast/GlobMatcher';
+import {COMMENT_TEMPLATE_PRESETS, CommentTemplatePreset} from '../../config/defaults';
 
 /**
  * ESLint rule for grouping Tailwind classes
@@ -17,7 +18,7 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
             description: 'Group Tailwind CSS classes into categories using clsx',
             category: 'Stylistic Issues',
             recommended: false,
-            url: 'https://github.com/your-repo/eslint-plugin-tailwind-grouping'
+            url: 'https://github.com/agolosnichenko/eslint-plugin-tailwind-grouping'
         },
         fixable: 'code',
         schema: [ruleOptionsSchema],
@@ -33,6 +34,9 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
             ...DEFAULT_OPTIONS,
             ...(context.options[0] as RuleOptions || {})
         };
+
+        // Resolve comment template (check if it's a preset name)
+        const resolvedCommentTemplate = resolveCommentTemplate(options.commentTemplate);
 
         // Check if this file should be processed
         const filename = context.getFilename();
@@ -66,14 +70,18 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
 
                 // Handle static string values
                 if (jsxAttr.value?.type === 'Literal' && typeof jsxAttr.value.value === 'string') {
-                    handleStaticClassName(jsxAttr, jsxAttr.value);
+                    handleStaticClassName(jsxAttr, jsxAttr.value).catch(() => {
+                        // Silently handle errors to prevent floating promises
+                    });
                 }
 
                 // Handle JSX expressions with string literals
                 if (jsxAttr.value?.type === 'JSXExpressionContainer' &&
                     jsxAttr.value.expression.type === 'Literal' &&
                     typeof jsxAttr.value.expression.value === 'string') {
-                    handleStaticClassName(jsxAttr, jsxAttr.value.expression);
+                    handleStaticClassName(jsxAttr, jsxAttr.value.expression).catch(() => {
+                        // Silently handle errors to prevent floating promises
+                    });
                 }
 
                 // Handle template literals (static only)
@@ -82,7 +90,9 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
                     jsxAttr.value.expression.expressions.length === 0 && // Only static templates
                     jsxAttr.value.expression.quasis.length === 1) {
                     const templateValue = jsxAttr.value.expression.quasis[0].value.cooked || '';
-                    handleStaticClassNameFromTemplate(jsxAttr, templateValue);
+                    handleStaticClassNameFromTemplate(jsxAttr, templateValue).catch(() => {
+                        // Silently handle errors to prevent floating promises
+                    });
                 }
 
                 // TODO: Handle existing clsx/cn calls for reorganization
@@ -90,13 +100,16 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
             }
         };
 
-        function handleStaticClassName(attrNode: JSXAttribute, literalNode: Literal) {
+        async function handleStaticClassName(attrNode: JSXAttribute, literalNode: Literal) {
             const classNameString = String(literalNode.value);
 
             // Transform the className
-            const result = transformUseCase.execute({
+            const result = await transformUseCase.execute({
                 classNameString,
-                threshold: options.threshold
+                threshold: options.threshold,
+                showGroupNames: options.showGroupNames,
+                order: options.order,
+                commentTemplate: resolvedCommentTemplate
             });
 
             if (!result.shouldTransform) {
@@ -142,11 +155,14 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
             });
         }
 
-        function handleStaticClassNameFromTemplate(attrNode: JSXAttribute, classNameString: string) {
+        async function handleStaticClassNameFromTemplate(attrNode: JSXAttribute, classNameString: string) {
             // Transform the className
-            const result = transformUseCase.execute({
+            const result = await transformUseCase.execute({
                 classNameString,
-                threshold: options.threshold
+                threshold: options.threshold,
+                showGroupNames: options.showGroupNames,
+                order: options.order,
+                commentTemplate: resolvedCommentTemplate
             });
 
             if (!result.shouldTransform) {
@@ -205,3 +221,17 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
         }
     }
 };
+
+/**
+ * Resolves a comment template string, checking if it's a preset name
+ * @param template - Template string or preset name
+ * @returns Resolved template string
+ */
+function resolveCommentTemplate(template: string): string {
+    // Check if it's a preset name
+    if (template in COMMENT_TEMPLATE_PRESETS) {
+        return COMMENT_TEMPLATE_PRESETS[template as CommentTemplatePreset];
+    }
+    // Otherwise, return as-is (custom template)
+    return template;
+}

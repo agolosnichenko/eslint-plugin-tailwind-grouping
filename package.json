@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-tailwind-grouping",
-  "version": "1.0.1",
+  "version": "1.1.0",
   "description": "ESLint plugin to group and organize Tailwind CSS classes",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -56,5 +56,9 @@
   ],
   "engines": {
     "node": ">=14.0.0"
+  },
+  "dependencies": {
+    "@herb-tools/tailwind-class-sorter": "^0.8.1",
+    "tailwindcss": "^3.4.18"
   }
 }
