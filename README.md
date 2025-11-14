@@ -13,7 +13,7 @@ readability and maintainability of your React/JSX code.
 - [Examples](#examples)
 - [Development](#development)
 
-## 🎯 Problem
+## Problem
 
 Large Tailwind className strings are difficult to read and maintain:
 
@@ -22,7 +22,7 @@ Large Tailwind className strings are difficult to read and maintain:
     className="border-input placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 dark:hover:bg-input/50 h-9 w-full min-w-0 appearance-none rounded-md border bg-transparent px-3 py-2 pr-9 text-sm shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed"/>
 ```
 
-## ✨ Solution
+## Solution
 
 The plugin automatically transforms long className strings into organized, commented groups using `clsx`:
 
@@ -47,7 +47,7 @@ The plugin automatically transforms long className strings into organized, comme
 />
 ```
 
-## 📦 Installation
+## Installation
 
 ```bash
 npm install --save-dev eslint-plugin-tailwind-grouping
@@ -57,7 +57,7 @@ yarn add -D eslint-plugin-tailwind-grouping
 pnpm add -D eslint-plugin-tailwind-grouping
 ```
 
-## 🚀 Usage
+## Usage
 
 ### ESLint Configuration (Flat Config - ESLint 9+)
 
@@ -107,7 +107,7 @@ This plugin is compatible with Prettier. Make sure to run ESLint with `--fix` fl
 eslint --fix .
 ```
 
-## ⚙️ Configuration
+## Configuration
 
 ### Options
 
@@ -170,7 +170,7 @@ eslint --fix .
 }
 ```
 
-## 📚 Examples
+## Examples
 
 ### Before
 
@@ -287,7 +287,7 @@ npm link eslint-plugin-tailwind-grouping
 - **Testability**: Pure business logic separated from infrastructure
 - **Type Safety**: Full TypeScript coverage with strict mode
 
-## 🤝 Contributing
+## Contributing
 
 Contributions are welcome! Please ensure:
 
@@ -296,11 +296,11 @@ Contributions are welcome! Please ensure:
 3. New features include tests
 4. TypeScript types are properly defined
 
-## 📄 License
+## License
 
 MIT
 
-## 🔗 Links
+## Links
 
 - [GitHub Repository](https://github.com/agolosnichenko/eslint-plugin-tailwind-grouping)
 - [Issue Tracker](https://github.com/agolosnichenko/eslint-plugin-tailwind-grouping/issues)
