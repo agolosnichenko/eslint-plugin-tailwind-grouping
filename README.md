@@ -1,6 +1,7 @@
 # ESLint Plugin: Tailwind Grouping
 
-An ESLint plugin that automatically groups and organizes Tailwind CSS classes into semantic categories, improving readability and maintainability of your React/JSX code.
+An ESLint plugin that automatically groups and organizes Tailwind CSS classes into semantic categories, improving
+readability and maintainability of your React/JSX code.
 
 ## 📋 Table of Contents
 
@@ -10,7 +11,6 @@ An ESLint plugin that automatically groups and organizes Tailwind CSS classes in
 - [Usage](#usage)
 - [Configuration](#configuration)
 - [Examples](#examples)
-- [Architecture](#architecture)
 - [Development](#development)
 
 ## 🎯 Problem
@@ -18,7 +18,8 @@ An ESLint plugin that automatically groups and organizes Tailwind CSS classes in
 Large Tailwind className strings are difficult to read and maintain:
 
 ```jsx
-<select className="border-input placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 dark:hover:bg-input/50 h-9 w-full min-w-0 appearance-none rounded-md border bg-transparent px-3 py-2 pr-9 text-sm shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed" />
+<select
+    className="border-input placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground dark:bg-input/30 dark:hover:bg-input/50 h-9 w-full min-w-0 appearance-none rounded-md border bg-transparent px-3 py-2 pr-9 text-sm shadow-xs transition-[color,box-shadow] outline-none disabled:pointer-events-none disabled:cursor-not-allowed"/>
 ```
 
 ## ✨ Solution
@@ -27,22 +28,22 @@ The plugin automatically transforms long className strings into organized, comme
 
 ```jsx
 <select
-  className={clsx(
-    // Size
-    "h-9 w-full min-w-0",
-    // Spacing
-    "px-3 py-2 pr-9",
-    // Border
-    "border border-input outline-none rounded-md",
-    // Background
-    "bg-transparent dark:bg-input/30 dark:hover:bg-input/50 selection:bg-primary",
-    // Text
-    "text-sm selection:text-primary-foreground placeholder:text-muted-foreground",
-    // Effects
-    "appearance-none shadow-xs transition-[color,box-shadow]",
-    // Others
-    "disabled:pointer-events-none disabled:cursor-not-allowed"
-  )}
+    className={clsx(
+        // Size
+        "h-9 w-full min-w-0",
+        // Spacing
+        "px-3 py-2 pr-9",
+        // Border
+        "border border-input outline-none rounded-md",
+        // Background
+        "bg-transparent dark:bg-input/30 dark:hover:bg-input/50 selection:bg-primary",
+        // Text
+        "text-sm selection:text-primary-foreground placeholder:text-muted-foreground",
+        // Effects
+        "appearance-none shadow-xs transition-[color,box-shadow]",
+        // Others
+        "disabled:pointer-events-none disabled:cursor-not-allowed"
+    )}
 />
 ```
 
@@ -65,18 +66,18 @@ pnpm add -D eslint-plugin-tailwind-grouping
 import tailwindGrouping from 'eslint-plugin-tailwind-grouping';
 
 export default [
-  {
-    plugins: {
-      'tailwind-grouping': tailwindGrouping
-    },
-    rules: {
-      'tailwind-grouping/group-classes': ['warn', {
-        threshold: 5,
-        include: ['**/*.tsx', '**/*.jsx'],
-        exclude: ['**/*.test.tsx']
-      }]
+    {
+        plugins: {
+            'tailwind-grouping': tailwindGrouping
+        },
+        rules: {
+            'tailwind-grouping/group-classes': ['warn', {
+                threshold: 5,
+                include: ['**/*.tsx', '**/*.jsx'],
+                exclude: ['**/*.test.tsx']
+            }]
+        }
     }
-  }
 ];
 ```
 
@@ -84,11 +85,16 @@ export default [
 
 ```json
 {
-  "plugins": ["tailwind-grouping"],
+  "plugins": [
+    "tailwind-grouping"
+  ],
   "rules": {
-    "tailwind-grouping/group-classes": ["warn", {
-      "threshold": 5
-    }]
+    "tailwind-grouping/group-classes": [
+      "warn",
+      {
+        "threshold": 5
+      }
+    ]
   }
 }
 ```
@@ -107,31 +113,34 @@ eslint --fix .
 
 ```typescript
 {
-  // Minimum number of classes required to trigger transformation
-  // Default: 0
-  threshold?: number;
+    // Minimum number of classes required to trigger transformation
+    // Default: 0
+    threshold ? : number;
 
-  // Glob patterns for files to include
-  // Default: [] (all files)
-  include?: string[];
+    // Glob patterns for files to include
+    // Default: [] (all files)
+    include ? : string[];
 
-  // Glob patterns for files to exclude
-  // Default: [] (no exclusions)
-  exclude?: string[];
+    // Glob patterns for files to exclude
+    // Default: [] (no exclusions)
+    exclude ? : string[];
 
-  // Custom mapping of groups to class patterns
-  // Default: DEFAULT_GROUP_MAPPING
-  mapping?: {
-    [groupName: string]: string[];
-  };
+    // Custom mapping of groups to class patterns
+    // Default: DEFAULT_GROUP_MAPPING
+    mapping ? : {
+        [groupName: string
+]:
+    string[];
+}
+    ;
 
-  // Custom order of groups
-  // Default: ['Size', 'Layout', 'Spacing', 'Border', 'Background', 'Text', 'Effects', 'Others']
-  groupOrder?: string[];
+    // Custom order of groups
+    // Default: ['Size', 'Layout', 'Spacing', 'Border', 'Background', 'Text', 'Effects', 'Others']
+    groupOrder ? : string[];
 
-  // Name of the utility function to use
-  // Default: 'clsx'
-  utilityFunction?: string;
+    // Name of the utility function to use
+    // Default: 'clsx'
+    utilityFunction ? : string;
 }
 ```
 
@@ -139,16 +148,18 @@ eslint --fix .
 
 ```javascript
 {
-  "tailwind-grouping/group-classes": ["warn", {
-    "threshold": 3,
-    "mapping": {
-      "Size": ["w-*", "h-*", "min-w-*", "max-w-*"],
-      "Colors": ["bg-*", "text-*", "border-*"],
-      "Spacing": ["p-*", "m-*", "gap-*"],
-      "Others": []
-    },
-    "groupOrder": ["Size", "Colors", "Spacing", "Others"]
-  }]
+    "tailwind-grouping/group-classes"
+:
+    ["warn", {
+        "threshold": 3,
+        "mapping": {
+            "Size": ["w-*", "h-*", "min-w-*", "max-w-*"],
+            "Colors": ["bg-*", "text-*", "border-*"],
+            "Spacing": ["p-*", "m-*", "gap-*"],
+            "Others": []
+        },
+        "groupOrder": ["Size", "Colors", "Spacing", "Others"]
+    }]
 }
 ```
 
@@ -156,9 +167,11 @@ eslint --fix .
 
 ```javascript
 {
-  "tailwind-grouping/group-classes": ["warn", {
-    "utilityFunction": "cn" // Use shadcn/ui's cn function
-  }]
+    "tailwind-grouping/group-classes"
+:
+    ["warn", {
+        "utilityFunction": "cn" // Use shadcn/ui's cn function
+    }]
 }
 ```
 
@@ -167,8 +180,9 @@ eslint --fix .
 ### Before
 
 ```jsx
-<div className="flex items-center justify-between p-4 bg-white border rounded-lg shadow-md hover:shadow-lg transition-shadow">
-  Content
+<div
+    className="flex items-center justify-between p-4 bg-white border rounded-lg shadow-md hover:shadow-lg transition-shadow">
+    Content
 </div>
 ```
 
@@ -176,20 +190,20 @@ eslint --fix .
 
 ```jsx
 <div
-  className={clsx(
-    // Layout
-    "flex items-center justify-between",
-    // Spacing
-    "p-4",
-    // Border
-    "border rounded-lg",
-    // Background
-    "bg-white",
-    // Effects
-    "shadow-md hover:shadow-lg transition-shadow"
-  )}
+    className={clsx(
+        // Layout
+        "flex items-center justify-between",
+        // Spacing
+        "p-4",
+        // Border
+        "border rounded-lg",
+        // Background
+        "bg-white",
+        // Effects
+        "shadow-md hover:shadow-lg transition-shadow"
+    )}
 >
-  Content
+    Content
 </div>
 ```
 
@@ -199,15 +213,17 @@ The plugin preserves all Tailwind modifiers (responsive, state, dark mode, etc.)
 
 ```jsx
 // Input
-className="md:flex lg:grid hover:bg-blue-500 dark:bg-gray-900"
+className = "md:flex lg:grid hover:bg-blue-500 dark:bg-gray-900"
 
 // Output
-className={clsx(
-  // Layout
-  "md:flex lg:grid",
-  // Background
-  "hover:bg-blue-500 dark:bg-gray-900"
-)}
+className = {
+    clsx(
+    // Layout
+    "md:flex lg:grid",
+    // Background
+    "hover:bg-blue-500 dark:bg-gray-900"
+)
+}
 ```
 
 ### Handling Arbitrary Values
@@ -216,62 +232,17 @@ Arbitrary values are properly grouped:
 
 ```jsx
 // Input
-className="w-[500px] h-[calc(100vh-80px)] bg-[#ff0000]"
+className = "w-[500px] h-[calc(100vh-80px)] bg-[#ff0000]"
 
 // Output
-className={clsx(
-  // Size
-  "w-[500px] h-[calc(100vh-80px)]",
-  // Background
-  "bg-[#ff0000]"
-)}
-```
-
-## 🏗️ Architecture
-
-This plugin follows **Clean Architecture** and **Domain-Driven Design** principles:
-
-### Domain Layer
-- **Value Objects**: `TailwindClass` - Immutable representation of a Tailwind class
-- **Entities**: `ClassGroup` - Group of related classes
-- **Aggregate Root**: `ClassGrouping` - Complete grouping of all classes
-- **Domain Services**: `ClassGroupingService` - Business logic for grouping
-
-### Application Layer
-- **Use Cases**: `TransformClassNameUseCase` - Orchestrates the transformation
-
-### Infrastructure Layer
-- **ESLint Integration**: Rule implementation and AST manipulation
-- **Import Management**: Auto-import of `clsx`
-- **Glob Matching**: File inclusion/exclusion logic
-
-### Project Structure
-
-```
-eslint-plugin-tailwind-grouping/
-├── src/
-│   ├── domain/              # Business logic (pure)
-│   │   ├── entities/
-│   │   │   ├── ClassGroup.ts
-│   │   │   └── ClassGrouping.ts
-│   │   ├── value-objects/
-│   │   │   └── TailwindClass.ts
-│   │   └── services/
-│   │       └── ClassGroupingService.ts
-│   ├── application/         # Use cases
-│   │   └── use-cases/
-│   │       └── TransformClassNameUseCase.ts
-│   ├── infrastructure/      # External concerns
-│   │   ├── eslint/
-│   │   │   ├── groupTailwindClassesRule.ts
-│   │   │   └── RuleOptions.ts
-│   │   └── ast/
-│   │       ├── ImportManager.ts
-│   │       └── GlobMatcher.ts
-│   ├── config/
-│   │   └── defaults.ts      # Default mappings
-│   └── index.ts             # Plugin entry
-└── tests/                   # Unit tests
+className = {
+    clsx(
+    // Size
+    "w-[500px] h-[calc(100vh-80px)]",
+    // Background
+    "bg-[#ff0000]"
+)
+}
 ```
 
 ## 🧪 Development
@@ -336,7 +307,7 @@ MIT
 
 ## 🔗 Links
 
-- [GitHub Repository](#)
-- [Issue Tracker](#)
+- [GitHub Repository](https://github.com/agolosnichenko/eslint-plugin-tailwind-grouping)
+- [Issue Tracker](https://github.com/agolosnichenko/eslint-plugin-tailwind-grouping/issues)
 - [Tailwind CSS Documentation](https://tailwindcss.com)
 - [ESLint Documentation](https://eslint.org)
