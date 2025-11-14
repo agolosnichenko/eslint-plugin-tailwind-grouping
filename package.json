@@ -1,6 +1,6 @@
 {
   "name": "eslint-plugin-tailwind-grouping",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "ESLint plugin to group and organize Tailwind CSS classes",
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
@@ -20,6 +20,15 @@
     "formatting",
     "code-style"
   ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/agolosnichenko/eslint-plugin-tailwind-grouping.git"
+  },
+  "homepage": "https://github.com/agolosnichenko/eslint-plugin-tailwind-grouping#readme",
+  "bugs": {
+    "url": "https://github.com/agolosnichenko/eslint-plugin-tailwind-grouping/issues"
+  },
+  "funding": "https://buymeacoffee.com/agolosnichenko",
   "author": "Anton Golosnichenko <a.golosnichenko@icloud.com>",
   "license": "MIT",
   "peerDependencies": {
