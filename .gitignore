@@ -11,6 +11,10 @@ dist/
 # Test coverage
 coverage/
 
+# NPM
+*.tgz
+.npmrc
+
 # IDE
 .vscode/
 .idea/
