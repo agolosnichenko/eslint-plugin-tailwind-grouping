@@ -6,6 +6,7 @@ import {ClassGroupingService} from '../../domain/services/ClassGroupingService';
 import {DEFAULT_OPTIONS, RuleOptions, ruleOptionsSchema} from './RuleOptions';
 import {ImportManager} from '../ast/ImportManager';
 import {GlobMatcher} from '../ast/GlobMatcher';
+import {COMMENT_TEMPLATE_PRESETS, CommentTemplatePreset} from '../../config/defaults';
 
 /**
  * ESLint rule for grouping Tailwind classes
@@ -33,6 +34,9 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
             ...DEFAULT_OPTIONS,
             ...(context.options[0] as RuleOptions || {})
         };
+
+        // Resolve comment template (check if it's a preset name)
+        const resolvedCommentTemplate = resolveCommentTemplate(options.commentTemplate);
 
         // Check if this file should be processed
         const filename = context.getFilename();
@@ -98,7 +102,8 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
                 classNameString,
                 threshold: options.threshold,
                 showGroupNames: options.showGroupNames,
-                order: options.order
+                order: options.order,
+                commentTemplate: resolvedCommentTemplate
             });
 
             if (!result.shouldTransform) {
@@ -150,7 +155,8 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
                 classNameString,
                 threshold: options.threshold,
                 showGroupNames: options.showGroupNames,
-                order: options.order
+                order: options.order,
+                commentTemplate: resolvedCommentTemplate
             });
 
             if (!result.shouldTransform) {
@@ -209,3 +215,17 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
         }
     }
 };
+
+/**
+ * Resolves a comment template string, checking if it's a preset name
+ * @param template - Template string or preset name
+ * @returns Resolved template string
+ */
+function resolveCommentTemplate(template: string): string {
+    // Check if it's a preset name
+    if (template in COMMENT_TEMPLATE_PRESETS) {
+        return COMMENT_TEMPLATE_PRESETS[template as CommentTemplatePreset];
+    }
+    // Otherwise, return as-is (custom template)
+    return template;
+}

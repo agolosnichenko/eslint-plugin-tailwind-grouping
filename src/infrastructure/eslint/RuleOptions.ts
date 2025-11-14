@@ -1,4 +1,10 @@
-import {GroupMapping, DEFAULT_GROUP_MAPPING, DEFAULT_GROUP_ORDER} from '../../config/defaults';
+import {
+    GroupMapping,
+    DEFAULT_GROUP_MAPPING,
+    DEFAULT_GROUP_ORDER,
+    DEFAULT_COMMENT_TEMPLATE,
+    CommentTemplatePreset
+} from '../../config/defaults';
 import {ClassOrder} from '../sorting/ClassSorter';
 
 export interface RuleOptions {
@@ -45,6 +51,20 @@ export interface RuleOptions {
     showGroupNames?: boolean;
 
     /**
+     * Comment template for group names.
+     * Can be a preset name ('line', 'block', 'jsdoc', 'bracket', 'numbered', 'verbose')
+     * or a custom template string with variables:
+     * - {groupName}: Name of the group
+     * - {index}: 1-based position of the group
+     * - {count}: Number of classes in the group
+     * @default "// {groupName}"
+     * @example "// {groupName}" → "// Size"
+     * @example "/* {groupName} *\/" → "/* Size *\/"
+     * @example "// {index}. {groupName} ({count})" → "// 1. Size (2)"
+     */
+    commentTemplate?: string | CommentTemplatePreset;
+
+    /**
      * Sorting order for classes within each group
      * @default "no-sort"
      */
@@ -59,6 +79,7 @@ export const DEFAULT_OPTIONS: Required<RuleOptions> = {
     groupOrder: [...DEFAULT_GROUP_ORDER],
     utilityFunction: 'clsx',
     showGroupNames: true,
+    commentTemplate: DEFAULT_COMMENT_TEMPLATE,
     order: 'no-sort'
 };
 
@@ -106,6 +127,11 @@ export const ruleOptionsSchema = {
             type: 'boolean',
             default: true,
             description: 'Whether to include group name comments in the output'
+        },
+        commentTemplate: {
+            type: 'string',
+            default: '// {groupName}',
+            description: 'Comment template for group names. Can be a preset (line, block, jsdoc, bracket, numbered, verbose) or a custom template with variables: {groupName}, {index}, {count}'
         },
         order: {
             type: 'string',

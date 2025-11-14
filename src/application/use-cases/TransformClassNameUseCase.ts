@@ -8,6 +8,7 @@ export interface TransformClassNameInput {
     threshold: number;
     showGroupNames?: boolean;
     order?: ClassOrder;
+    commentTemplate?: string;
 }
 
 export interface TransformClassNameOutput {
@@ -26,7 +27,13 @@ export class TransformClassNameUseCase {
     }
 
     async execute(input: TransformClassNameInput): Promise<TransformClassNameOutput> {
-        const {classNameString, threshold, showGroupNames = true, order} = input;
+        const {
+            classNameString,
+            threshold,
+            showGroupNames = true,
+            order = "no-sort",
+            commentTemplate = '// {groupName}'
+        } = input;
 
         // Parse the string into individual classes
         const classNames = this.parseClassNames(classNameString);
@@ -62,7 +69,7 @@ export class TransformClassNameUseCase {
             : undefined;
 
         // Generate the transformed string
-        const transformedString = await grouping.toClsxString(2, showGroupNames, sorter);
+        const transformedString = await grouping.toClsxString(2, showGroupNames, commentTemplate, sorter);
 
         return {
             shouldTransform: true,

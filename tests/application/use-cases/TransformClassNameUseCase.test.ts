@@ -167,6 +167,109 @@ describe('TransformClassNameUseCase', () => {
             });
         });
 
+        describe('comment templates', () => {
+            it('should use default comment template when not specified', async () => {
+                const result = await useCase.execute({
+                    classNameString: 'w-full px-3 bg-transparent',
+                    threshold: 0
+                });
+
+                expect(result.shouldTransform).toBe(true);
+                expect(result.transformedString).toContain('// Size');
+                expect(result.transformedString).toContain('// Spacing');
+                expect(result.transformedString).toContain('// Background');
+            });
+
+            it('should use custom comment template with groupName variable', async () => {
+                const result = await useCase.execute({
+                    classNameString: 'w-full px-3 bg-transparent',
+                    threshold: 0,
+                    commentTemplate: '/* {groupName} */'
+                });
+
+                expect(result.shouldTransform).toBe(true);
+                expect(result.transformedString).toContain('/* Size */');
+                expect(result.transformedString).toContain('/* Spacing */');
+                expect(result.transformedString).toContain('/* Background */');
+            });
+
+            it('should use custom comment template with index variable', async () => {
+                const result = await useCase.execute({
+                    classNameString: 'w-full px-3 bg-transparent',
+                    threshold: 0,
+                    commentTemplate: '// {index}. {groupName}'
+                });
+
+                expect(result.shouldTransform).toBe(true);
+                expect(result.transformedString).toContain('// 1. Size');
+                expect(result.transformedString).toContain('// 2. Spacing');
+                expect(result.transformedString).toContain('// 3. Background');
+            });
+
+            it('should use custom comment template with count variable', async () => {
+                const result = await useCase.execute({
+                    classNameString: 'w-full h-9 px-3 py-2 bg-transparent',
+                    threshold: 0,
+                    commentTemplate: '// {groupName} ({count})'
+                });
+
+                expect(result.shouldTransform).toBe(true);
+                expect(result.transformedString).toContain('// Size (2)');
+                expect(result.transformedString).toContain('// Spacing (2)');
+                expect(result.transformedString).toContain('// Background (1)');
+            });
+
+            it('should use custom comment template with all variables', async () => {
+                const result = await useCase.execute({
+                    classNameString: 'w-full px-3 bg-transparent',
+                    threshold: 0,
+                    commentTemplate: '// {index}. {groupName} - {count} classes'
+                });
+
+                expect(result.shouldTransform).toBe(true);
+                expect(result.transformedString).toContain('// 1. Size - 1 classes');
+                expect(result.transformedString).toContain('// 2. Spacing - 1 classes');
+                expect(result.transformedString).toContain('// 3. Background - 1 classes');
+            });
+
+            it('should use bracket format template', async () => {
+                const result = await useCase.execute({
+                    classNameString: 'w-full px-3',
+                    threshold: 0,
+                    commentTemplate: '// [{groupName}]'
+                });
+
+                expect(result.shouldTransform).toBe(true);
+                expect(result.transformedString).toContain('// [Size]');
+                expect(result.transformedString).toContain('// [Spacing]');
+            });
+
+            it('should use JSDoc format template', async () => {
+                const result = await useCase.execute({
+                    classNameString: 'w-full px-3',
+                    threshold: 0,
+                    commentTemplate: '/** {groupName} **/'
+                });
+
+                expect(result.shouldTransform).toBe(true);
+                expect(result.transformedString).toContain('/** Size **/');
+                expect(result.transformedString).toContain('/** Spacing **/');
+            });
+
+            it('should handle empty template', async () => {
+                const result = await useCase.execute({
+                    classNameString: 'w-full px-3',
+                    threshold: 0,
+                    commentTemplate: ''
+                });
+
+                expect(result.shouldTransform).toBe(true);
+                // Should not contain any default comment markers
+                expect(result.transformedString).not.toContain('// Size');
+                expect(result.transformedString).not.toContain('// Spacing');
+            });
+        });
+
         describe('sorting', () => {
             it('should preserve original order when order is "no-sort"', async () => {
                 const result = await useCase.execute({

@@ -12,6 +12,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Default value: `true` (maintains backward compatibility)
   - When set to `false`, generates grouped output without comment markers
   - Useful for users who prefer cleaner output or have their own commenting strategy
+- **Custom Comment Templates**: New `commentTemplate` configuration option for customizing group comment appearance
+  - Supports template variables: `{groupName}`, `{index}`, `{count}`
+  - Includes 6 preset templates:
+    - `line`: `// {groupName}` (default)
+    - `block`: `/* {groupName} */`
+    - `jsdoc`: `/** {groupName} **/`
+    - `bracket`: `// [{groupName}]`
+    - `numbered`: `// {index}. {groupName}`
+    - `verbose`: `// {groupName} ({count} classes)`
+  - Supports custom template strings with any combination of variables
+  - Examples:
+    - `"// {index}. {groupName}"` → `"// 1. Size"`
+    - `"/* {groupName} ({count}) */"` → `"/* Size (3) */"`
 - New `order` configuration option to control sorting of classes within each group
   - `"no-sort"` (default): Preserve original order of classes
   - `"asc"`: Sort classes alphabetically A-Z within each group
@@ -67,5 +80,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Support for conditional className expressions
 - Integration with Tailwind CSS IntelliSense
 - VS Code extension
-- Custom comment templates
 - Performance optimizations for large files

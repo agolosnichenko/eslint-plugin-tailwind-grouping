@@ -143,6 +143,13 @@ eslint --fix .
     // Default: true
     showGroupNames?: boolean;
 
+    // Comment template for group names
+    // Can be a preset name or a custom template string with variables
+    // Default: "// {groupName}"
+    // Presets: 'line', 'block', 'jsdoc', 'bracket', 'numbered', 'verbose'
+    // Variables: {groupName}, {index}, {count}
+    commentTemplate?: string;
+
     // Sorting order for classes within each group
     // Default: "no-sort"
     // Options: 'no-sort' | 'asc' | 'desc' | 'official'
@@ -224,6 +231,87 @@ If you prefer cleaner output without the group name comments, you can disable th
 >
     Content
 </div>
+```
+
+### Example: Custom Comment Templates
+
+Customize how group comments appear using templates with variables or presets:
+
+#### Using Preset Templates
+
+```javascript
+{
+    "tailwind-grouping/group-classes": ["warn", {
+        "commentTemplate": "block"  // Use block comment style
+    }]
+}
+```
+
+**Available Presets:**
+- `line`: `// {groupName}` (default)
+- `block`: `/* {groupName} */`
+- `jsdoc`: `/** {groupName} **/`
+- `bracket`: `// [{groupName}]`
+- `numbered`: `// {index}. {groupName}`
+- `verbose`: `// {groupName} ({count} classes)`
+
+#### Using Custom Templates
+
+Create your own templates with these variables:
+- `{groupName}`: Name of the group (e.g., "Size", "Spacing")
+- `{index}`: 1-based position of the group
+- `{count}`: Number of classes in the group
+
+```javascript
+{
+    "tailwind-grouping/group-classes": ["warn", {
+        "commentTemplate": "// {index}. {groupName} ({count})"
+    }]
+}
+```
+
+**Example outputs:**
+
+```jsx
+// With commentTemplate: "/* {groupName} */"
+<div
+    className={clsx(
+        /* Size */
+        "h-9 w-full",
+        /* Spacing */
+        "px-3 py-2"
+    )}
+/>
+
+// With commentTemplate: "// {index}. {groupName}"
+<div
+    className={clsx(
+        // 1. Size
+        "h-9 w-full",
+        // 2. Spacing
+        "px-3 py-2"
+    )}
+/>
+
+// With commentTemplate: "// {groupName} ({count})"
+<div
+    className={clsx(
+        // Size (2)
+        "h-9 w-full",
+        // Spacing (2)
+        "px-3 py-2"
+    )}
+/>
+
+// With commentTemplate: "// [{index}] {groupName} - {count} classes"
+<div
+    className={clsx(
+        // [1] Size - 2 classes
+        "h-9 w-full",
+        // [2] Spacing - 2 classes
+        "px-3 py-2"
+    )}
+/>
 ```
 
 ### Example: Class Sorting
