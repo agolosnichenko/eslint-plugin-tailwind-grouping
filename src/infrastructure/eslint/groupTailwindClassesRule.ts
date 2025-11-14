@@ -17,7 +17,7 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
             description: 'Group Tailwind CSS classes into categories using clsx',
             category: 'Stylistic Issues',
             recommended: false,
-            url: 'https://github.com/your-repo/eslint-plugin-tailwind-grouping'
+            url: 'https://github.com/agolosnichenko/eslint-plugin-tailwind-grouping'
         },
         fixable: 'code',
         schema: [ruleOptionsSchema],
@@ -90,13 +90,15 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
             }
         };
 
-        function handleStaticClassName(attrNode: JSXAttribute, literalNode: Literal) {
+        async function handleStaticClassName(attrNode: JSXAttribute, literalNode: Literal) {
             const classNameString = String(literalNode.value);
 
             // Transform the className
-            const result = transformUseCase.execute({
+            const result = await transformUseCase.execute({
                 classNameString,
-                threshold: options.threshold
+                threshold: options.threshold,
+                showGroupNames: options.showGroupNames,
+                order: options.order
             });
 
             if (!result.shouldTransform) {
@@ -142,11 +144,13 @@ export const groupTailwindClassesRule: Rule.RuleModule = {
             });
         }
 
-        function handleStaticClassNameFromTemplate(attrNode: JSXAttribute, classNameString: string) {
+        async function handleStaticClassNameFromTemplate(attrNode: JSXAttribute, classNameString: string) {
             // Transform the className
-            const result = transformUseCase.execute({
+            const result = await transformUseCase.execute({
                 classNameString,
-                threshold: options.threshold
+                threshold: options.threshold,
+                showGroupNames: options.showGroupNames,
+                order: options.order
             });
 
             if (!result.shouldTransform) {

@@ -1,4 +1,5 @@
-import { GroupMapping, DEFAULT_GROUP_MAPPING, DEFAULT_GROUP_ORDER } from '../../config/defaults';
+import {GroupMapping, DEFAULT_GROUP_MAPPING, DEFAULT_GROUP_ORDER} from '../../config/defaults';
+import {ClassOrder} from '../sorting/ClassSorter';
 
 export interface RuleOptions {
     /**
@@ -36,6 +37,18 @@ export interface RuleOptions {
      * @default "clsx"
      */
     utilityFunction?: string;
+
+    /**
+     * Whether to include group name comments in the output
+     * @default true
+     */
+    showGroupNames?: boolean;
+
+    /**
+     * Sorting order for classes within each group
+     * @default "no-sort"
+     */
+    order?: ClassOrder;
 }
 
 export const DEFAULT_OPTIONS: Required<RuleOptions> = {
@@ -44,7 +57,9 @@ export const DEFAULT_OPTIONS: Required<RuleOptions> = {
     exclude: [],
     mapping: DEFAULT_GROUP_MAPPING,
     groupOrder: [...DEFAULT_GROUP_ORDER],
-    utilityFunction: 'clsx'
+    utilityFunction: 'clsx',
+    showGroupNames: true,
+    order: 'no-sort'
 };
 
 /**
@@ -61,31 +76,42 @@ export const ruleOptionsSchema = {
         },
         include: {
             type: 'array',
-            items: { type: 'string' },
+            items: {type: 'string'},
             description: 'Glob patterns for files to include'
         },
         exclude: {
             type: 'array',
-            items: { type: 'string' },
+            items: {type: 'string'},
             description: 'Glob patterns for files to exclude'
         },
         mapping: {
             type: 'object',
             additionalProperties: {
                 type: 'array',
-                items: { type: 'string' }
+                items: {type: 'string'}
             },
             description: 'Custom mapping of groups to class patterns'
         },
         groupOrder: {
             type: 'array',
-            items: { type: 'string' },
+            items: {type: 'string'},
             description: 'Custom order of groups'
         },
         utilityFunction: {
             type: 'string',
             default: 'clsx',
             description: 'Name of the utility function to use'
+        },
+        showGroupNames: {
+            type: 'boolean',
+            default: true,
+            description: 'Whether to include group name comments in the output'
+        },
+        order: {
+            type: 'string',
+            enum: ['no-sort', 'asc', 'desc', 'official'],
+            default: 'no-sort',
+            description: 'Sorting order for classes within each group'
         }
     },
     additionalProperties: false

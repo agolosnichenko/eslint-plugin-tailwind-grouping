@@ -1,4 +1,11 @@
 import {ClassGroup} from './ClassGroup';
+import { TailwindClass } from '../value-objects/TailwindClass';
+
+/**
+ * Type for sorting function that takes classes and returns sorted classes
+ * Can be async to support external sorting libraries
+ */
+export type ClassSorterFunction = (classes: TailwindClass[]) => Promise<TailwindClass[]> | TailwindClass[];
 
 /**
  * Aggregate Root representing the complete grouping of Tailwind classes
@@ -51,9 +58,16 @@ export class ClassGrouping {
     }
 
     /**
-     * Formats the grouping as a clsx expression with comments
+     * Formats the grouping as a clsx expression with optional comments
+     * @param indentLevel - Number of spaces for indentation
+     * @param showGroupNames - Whether to include group name comments
+     * @param sorter - Optional sorting function to apply to classes in each group
      */
-    toClsxString(indentLevel: number = 2): string {
+    async toClsxString(
+        indentLevel: number = 2,
+        showGroupNames: boolean = true,
+        sorter?: ClassSorterFunction
+    ): Promise<string> {
         const indent = ' '.repeat(indentLevel);
         const nonEmptyGroups = this.getNonEmptyGroups();
 
@@ -61,12 +75,22 @@ export class ClassGrouping {
             return '""';
         }
 
-        const lines = nonEmptyGroups.flatMap((group, index) => {
-            return [
-                `${indent}// ${group.name}`,
-                `${indent}"${group.toClassString()}"${index < nonEmptyGroups.length - 1 ? ',' : ''}`
-            ];
-        });
+        const lines: string[] = [];
+
+        for (let index = 0; index < nonEmptyGroups.length; index++) {
+            const group = nonEmptyGroups[index];
+
+            // Apply sorting if sorter function is provided
+            const sortedClasses = sorter ? await sorter(group.classes) : undefined;
+            const classLine = `${indent}"${group.toClassString(sortedClasses)}"${index < nonEmptyGroups.length - 1 ? ',' : ''}`;
+
+            if (showGroupNames) {
+                lines.push(`${indent}// ${group.name}`);
+                lines.push(classLine);
+            } else {
+                lines.push(classLine);
+            }
+        }
 
         return `clsx(\n${lines.join('\n')}\n${' '.repeat(indentLevel - 2)})`;
     }
